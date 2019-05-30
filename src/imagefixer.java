@@ -3,5 +3,6 @@ public class imagefixer {
         System.out.println("yeet");
         System.out.println("yeet");
         System.out.println("yeet");
+        System.out.println("yeet");
     }
 }
