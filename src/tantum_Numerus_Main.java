@@ -7,21 +7,18 @@ import javax.imageio.ImageIO;
 public class tantum_Numerus_Main {
     public static final int WIDTH=20;
     public static final int HEIGHT=20;
+    public static final int SHADING=3; //used only for the benefit of the human looking at the resized images.
     public static void imageFixer(String file){
         File f=null;
         BufferedImage img=null;
         try{
             f = new File("Images\\"+file+".png");
             img = ImageIO.read(f);
-            grayScale(img);
         }catch(IOException e){
             System.out.println(e.getMessage());
         }
-        Image tmp = img.getScaledInstance(WIDTH, HEIGHT, Image.SCALE_SMOOTH);
-        BufferedImage resized = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = resized.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
+        BufferedImage resized=resize(img);
+        grayScale(resized);
         try{
             f = new File("C:\\Users\\NerdMachine2\\IdeaProjects\\tantumerous\\Images\\"+file+"_output.png");
             ImageIO.write(resized, "png", f);
@@ -40,14 +37,24 @@ public class tantum_Numerus_Main {
                 int g = (p>>8)&0xff;
                 int b = p&0xff;
                 int avg = (r+g+b)/3;
+                if(avg!=255)
+                    avg/=SHADING;
                 p = (a<<24) | (avg<<16) | (avg<<8) | avg;
                 image.setRGB(x, y, p);
             }
         }
     }
+    private static BufferedImage resize(BufferedImage img){
+        Image tmp = img.getScaledInstance(WIDTH, HEIGHT,Image.SCALE_SMOOTH);
+        BufferedImage resized = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resized.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+        return resized;
+    }
 
     public static void main(String[] args) {
-        imageFixer("num2");
+        imageFixer("num_4");
     }
 
 }
