@@ -1,7 +1,7 @@
 import java.awt.image.BufferedImage;
 
 public class nueral_Net {
-    Nueron[][] nuerons;
+    public Nueron[][] nuerons;
     public nueral_Net(int layers){
 
     }
@@ -33,8 +33,10 @@ class Nueron{
         return null;
     }
     //public double[] requestsnuerons(double target){} // asks for changes in parent nuerons maybe implemented
-    public void calculateval(){
-        //value= weighted sum of past nodes values plus bias
+    public void calculateval(Nueron[] nuerons){
+        for(int i= 0;i<weights.length;i++){
+            value+=nuerons[i].value*weights[i]+bias[i];
+        }
     }
 
 }

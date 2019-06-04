@@ -44,6 +44,7 @@ public class tantum_Numerus_Main {
             }
         }
     }
+
     private static BufferedImage resize(BufferedImage img){
         Image tmp = img.getScaledInstance(WIDTH, HEIGHT,Image.SCALE_SMOOTH);
         BufferedImage resized = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
@@ -54,6 +55,7 @@ public class tantum_Numerus_Main {
     }
 
     public static void main(String[] args) {
+
         imageFixer("num_4");
     }
 
