@@ -5,6 +5,7 @@ public class nueral_Net {
     private int layers;
     public nueral_Net(int layers){
         this.layers=layers;
+        //creates nodes
     }
     public void savestate(){
 
@@ -17,7 +18,7 @@ public class nueral_Net {
     }
     public int guessthatnumber(BufferedImage img){
         for(int i=0;i<nuerons[0].length;i++){
-            //put img into first layer
+            nuerons[0][i].value=img.getRGB(i%20,i/20);
         }
         for (int i = 1;i <nuerons.length ; i++) {
             for (int j = 0; j <nuerons[i].length ; j++) {
