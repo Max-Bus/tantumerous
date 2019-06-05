@@ -1,9 +1,10 @@
 import java.awt.image.BufferedImage;
 
 public class nueral_Net {
-    public Nueron[][] nuerons;
+    private Nueron[][] nuerons;
+    private int layers;
     public nueral_Net(int layers){
-
+        this.layers=layers;
     }
     public void savestate(){
 
@@ -15,7 +16,23 @@ public class nueral_Net {
 
     }
     public int guessthatnumber(BufferedImage img){
-        return -1;
+        for(int i=0;i<nuerons[0].length;i++){
+            //put img into first layer
+        }
+        for (int i = 1;i <nuerons.length ; i++) {
+            for (int j = 0; j <nuerons[i].length ; j++) {
+                nuerons[i][j].calculateval(nuerons[i-1]);
+            }
+        }
+        int highest=-1;
+        Nueron highestnueron=nuerons[layers][0];
+        for (int i = 0; i <nuerons[layers].length ; i++) {
+            if(highestnueron.value<nuerons[layers][i].value){
+                highestnueron=nuerons[layers][i];
+                highest=i;
+            }
+        }
+        return highest;
     }
 
 }
