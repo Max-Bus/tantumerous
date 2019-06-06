@@ -1,3 +1,4 @@
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -184,17 +185,41 @@ public class neural_Net {
 
     }
 
-    private void backprop(String[] imgs,int[] expectedOutput,int numloops){
-        for (int i=0;i<numloops;i++) {
-            //its going to run through a training example find out the weights and nodes that need to be strengthened
+    private void backprop(String[] imgs,int[] expectedOutput,int numloops)throws IOException{
+        File f=null;
+        BufferedImage img=null;
+        double[][][] aggregateWeights=new double[layers][][];
+        for(int j=0;j<numloops;j++) {
+            for (int i = 0; i < imgs.length; i++) {
+                //its going to run through a training example find out the weights and nodes that need to be strengthened
+                f = new File("Images\\" + imgs[i] + ".png");
+                img = ImageIO.read(f);
+                guessthatnumber(img);
+                //find what needs to happen
 
+                // call a recursive (maybe normal loop instead) function that repeats the process for each layer
 
-            // then it will store that info and average it
+                // then it will store that info
+            }
+            //averages the value of each weight that was requested
+            //first list is list of layers second list is list of neurons third list is the list of weights in said neuron
+            for (double[][] layer:aggregateWeights) {
+                for (double[] weights:layer) {
+                    for (int i = 0; i <weights.length ; i++) {
+                        weights[i]/=imgs.length;
+                    }
+                }
 
+            }
+            //takes the averaged list and change neurons accordingly
+            for (int i = 0; i <layers ; i++) {
+                for (int k = 0; k <neurons[k].length ; k++) {
+                    neurons[i][k].changeweights(aggregateWeights[i][k]);
+                }
+            }
             //finally it will rewrite each neuron to match the average
 
-
-        }//repeat until accuracy high
+        } //repeat
         try {
             savestate("results");
         }catch (IOException e){
