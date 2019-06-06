@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 
 
-//hello, I changed a thing, you initially spelled "neurons" wrong
+//hello, I changed a thing, you initially spelled "neurons" wrong garcia
 public class neural_Net {
     private Neuron[][] neurons;
     private int layers;
@@ -184,19 +184,36 @@ public class neural_Net {
 
     }
 
-    private void backprop(){
+    private void backprop(String[] imgs,int[] expectedOutput,int numloops){
+        for (int i=0;i<numloops;i++) {
+            //its going to run through a training example find out the weights and nodes that need to be strengthened
 
+
+            // then it will store that info and average it
+
+            //finally it will rewrite each neuron to match the average
+
+
+        }//repeat until accuracy high
+        try {
+            savestate("results");
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
     }
 
-    public int guessthatnumber(BufferedImage img){
+    public int[] guessthatnumber(BufferedImage img){
+        //reads in the img into the first layer
         for(int i=0;i<neurons[0].length;i++){
             neurons[0][i].value=img.getRGB(i/width,i%height);
         }
+        //loops through the many layers and nuerons updating each layers value
         for (int i = 1;i <neurons.length ; i++) {
             for (int j = 0; j <neurons[i].length ; j++) {
                 neurons[i][j].calculateval(neurons[i-1]);
             }
         }
+        //finds the hieghest of the out put nodes and returns what it believes teh number is
         int highest=-1;
         Neuron highestnueron=neurons[layers][0];
         for (int i = 0; i <neurons[layers].length ; i++) {
@@ -205,16 +222,18 @@ public class neural_Net {
                 highest=i;
             }
         }
-        return highest;
+        //returns the number it believes the image to be as well as its certainty
+        int[] out ={highest,(int)highestnueron.value*100};
+        return out;
     }
 
 }
 
 class Neuron{
-    double value;
-    double[] weights;
-    double[] bias;
-    //maybe it should have a list of nodes from previous layer
+    protected double value;
+    protected double[] weights;
+    protected double[] bias;
+    //maybe it should have a list of nodes from previous layer. maybe
     //comment from Owen: Is it necessary to have both weights and biases?
     public Neuron(double val, int previouslayer){
 
@@ -232,7 +251,12 @@ class Neuron{
             bias[i] += (Math.random()- .5);
         }
     }
-
+    public void changeweights(double [] w){
+        weights=w.clone();
+    }
+    public void changebias(double [] b){
+        bias=b.clone();
+    }
     //Owen's homemade constructor, for making a neuron when you know about it
     public Neuron(double[] weights, double[] biases, int val){
         this.weights = weights;
