@@ -272,9 +272,14 @@ class Neuron{
 
     //public double[] requestsneurons(double target){} // asks for changes in parent neurons maybe implemented
     public void calculateval(Neuron[] neurons){
+        double val=0;
         for(int i= 0;i<weights.length;i++){
-            value+=neurons[i].value*weights[i]+bias[i];
+            val+=neurons[i].value*weights[i]+bias[i];
         }
+        value=sigmoid(val);
+    }
+    public double sigmoid(double x) {
+        return (1/( 1 + Math.pow(Math.E,(-1*x))));
     }
 
 }
