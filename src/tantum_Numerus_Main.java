@@ -19,6 +19,7 @@ public class tantum_Numerus_Main {
         }
         BufferedImage resized=resize(img);
         grayScale(resized);
+        //maybe put images in a folder in the git repository? then we don't need paths to places on your computer
         try{
             f = new File("C:\\Users\\NerdMachine2\\IdeaProjects\\tantumerous\\Images\\"+file+"_output.png");
             ImageIO.write(resized, "png", f);
