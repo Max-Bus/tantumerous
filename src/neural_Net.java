@@ -16,6 +16,15 @@ public class neural_Net {
     }
 
 
+    //last resort evolution thing
+    public void randomMutate(){
+        for(int i = 0; i < neurons.length; i++){
+            for(int r  = 0; r < neurons[i].length; r++){
+                neurons[i][r].randomMutation();
+            }
+        }
+    }
+
 
 
 
@@ -154,7 +163,9 @@ public class neural_Net {
 
 
 
-    public void training(/*tests not sure what data type*/){
+    public void training(String dataSetPath){
+
+        String[] files;
 
     }
 
@@ -195,6 +206,16 @@ class Neuron{
         weights=new double[previouslayer];
         bias=new double[previouslayer];
         value=val;
+    }
+
+    //last resort for evolution
+    protected void randomMutation(){
+        for(int i = 0; i < weights.length; i++){
+            weights[i] += (Math.random()- .5);
+        }
+        for(int i = 0; i < bias.length; i++){
+            bias[i] += (Math.random()- .5);
+        }
     }
 
     //Owen's homemade constructor, for making a neuron when you know about it
