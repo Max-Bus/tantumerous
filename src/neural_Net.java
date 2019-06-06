@@ -10,9 +10,24 @@ import java.util.stream.Stream;
 public class neural_Net {
     private Neuron[][] neurons;
     private int layers;
-
-    public neural_Net(int layers){
+    public final int width;
+    public final int height;
+    public final int outputnodes=10;
+    public neural_Net(int layers,int w, int h){
+        width=w;
         this.layers=layers;
+        height=h;
+        neurons=new Neuron[layers][];
+        neurons[0]=new Neuron[w*h];
+        for (int i = 0; i <neurons[0].length ; i++) {
+            neurons[0][i]=new Neuron(0,0);
+        }
+        for (int i = 1; i <neurons.length ; i++) {
+            neurons[i]=new Neuron[(int)Math.sqrt(neurons[i-1].length)+outputnodes];
+            for (int j = 0; j <neurons[i].length ; j++) {
+                neurons[i][j]=new Neuron(0,neurons[i-1].length);
+            }
+        }
     }
 
 
@@ -175,7 +190,7 @@ public class neural_Net {
 
     public int guessthatnumber(BufferedImage img){
         for(int i=0;i<neurons[0].length;i++){
-            //put img into first layer
+            neurons[0][i].value=img.getRGB(i/width,i%height);
         }
         for (int i = 1;i <neurons.length ; i++) {
             for (int j = 0; j <neurons[i].length ; j++) {
