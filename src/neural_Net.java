@@ -184,6 +184,44 @@ public class neural_Net {
         String[] files;
 
     }
+    public void sumofweights(int expoutput,double[][][] aggregate){
+        double[] requests=cost(expoutput);
+        for (int i = layers-1; i >1 ; i++) {
+            aggregate[i]=new double[neurons[i].length][neurons[i-1].length];
+            for (int j = 0; j <neurons[i].length; j++) {
+                for (int k = 0; k <neurons[i-1].length ; k++) {
+                    aggregate[i][j][k]+=neurons[i][j].requestsweights(requests[j],neurons[i-1])[k];
+                }
+            }
+            requests=neuronchanges(i-1,requests);
+        }
+    }
+
+    public double[] neuronchanges(int layer,double[] changes){
+        double[] request=new double[neurons[layer-1].length];
+        for (int i = 0; i <neurons[layer].length ; i++) {
+            for (int j = 0; j <neurons[layer-1].length ; j++) {
+                request[j]+=neurons[layer][i].requestsneurons(changes[i],neurons[layer])[j];
+            }
+        }
+        for (int i = 0; i <request.length ; i++) {
+            request[i]/=neurons[layer].length;
+        }
+        //average the requestes made by nuerons of previous layer
+        return request;
+    }
+    public double[] cost(double expout){
+        double[] out=new double[outputnodes];
+        for (int i = 0; i <outputnodes ; i++) {
+            if(i==expout){
+                out[i]=1-neurons[layers-1][i].value;
+            }
+            else{
+                out[i]=neurons[layers-1][i].value-1;
+            }
+        }
+        return out;
+    }
 
     private void backprop(String[] imgs,int[] expectedOutput,int numloops)throws IOException{
         File f=null;
@@ -196,6 +234,10 @@ public class neural_Net {
                 img = ImageIO.read(f);
                 guessthatnumber(img);
                 //find what needs to happen
+                sumofweights(expectedOutput[j],aggregateWeights);
+                //for each neuron add to the weights the absolute value some number(amount it ust be changed times the value of the proceeding neuron
+                //request decreases in the neurons of the previus layer by multiplying some number by teh weights associated with those neurons
+
 
                 // call a recursive (maybe normal loop instead) function that repeats the process for each layer
 
@@ -290,12 +332,22 @@ class Neuron{
     }
 
 
-    public double[] requestsweights(double target){ //makes a request for changes to weights given a target value
-        return null;
+    public double[] requestsweights(double change,Neuron[] previousnodes){ //makes a request for changes to weights given a target value
+        double[] request=new double[previousnodes.length];
+        for (int i = 0; i <weights.length ; i++) {
+            request[i]=change*previousnodes[i].value;
+        }
+        return request;
     }
 
 
-    //public double[] requestsneurons(double target){} // asks for changes in parent neurons maybe implemented
+    public double[] requestsneurons(double change,Neuron[] previousnodes){//changes the weight of a neuron tahn returns requests for previous layer neurons
+        double[] requests=new double[previousnodes.length];
+        for (int i = 0; i <previousnodes.length ; i++) {
+            requests[i]=weights[i]*change;
+        }
+        return requests;
+    }
     public void calculateval(Neuron[] neurons){
         double val=0;
         for(int i= 0;i<weights.length;i++){
