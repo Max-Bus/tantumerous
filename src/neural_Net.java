@@ -198,10 +198,11 @@ public class neural_Net {
     }
 
     public double[] neuronchanges(int layer,double[] changes){
-        double[] request=new double[neurons[layer-1].length];
-        for (int i = 0; i <neurons[layer].length ; i++) {
-            for (int j = 0; j <neurons[layer-1].length ; j++) {
-                request[j]+=neurons[layer][i].requestsneurons(changes[i],neurons[layer])[j];
+        //finds what the average requests for neurons of the previuos layer is
+        double[] request=new double[neurons[layer].length];
+        for (int i = 0; i <neurons[layer+1].length ; i++) {
+            for (int j = 0; j <neurons[layer].length ; j++) {
+                request[j]+=neurons[layer+1][i].requestsneurons(changes[i],neurons[layer])[j];
             }
         }
         for (int i = 0; i <request.length ; i++) {
@@ -211,6 +212,7 @@ public class neural_Net {
         return request;
     }
     public double[] cost(double expout){
+        //base requests based off expected output
         double[] out=new double[outputnodes];
         for (int i = 0; i <outputnodes ; i++) {
             if(i==expout){
@@ -226,15 +228,15 @@ public class neural_Net {
     private void backprop(String[] imgs,int[] expectedOutput,int numloops)throws IOException{
         File f=null;
         BufferedImage img=null;
-        double[][][] aggregateWeights=new double[layers][][];
+        double[][][] aggregateWeights=new double[layers][][]; // array full of all requested weight changes
         for(int j=0;j<numloops;j++) {
             for (int i = 0; i < imgs.length; i++) {
                 //its going to run through a training example find out the weights and nodes that need to be strengthened
                 f = new File("Images\\" + imgs[i] + ".png");
                 img = ImageIO.read(f);
-                guessthatnumber(img);
+                guessthatnumber(img); //runs teh img through the neural net
                 //find what needs to happen
-                sumofweights(expectedOutput[j],aggregateWeights);
+                sumofweights(expectedOutput[j],aggregateWeights); //propigates backwards through the neural net adding requests to aggregatedWeights
                 //for each neuron add to the weights the absolute value some number(amount it ust be changed times the value of the proceeding neuron
                 //request decreases in the neurons of the previus layer by multiplying some number by teh weights associated with those neurons
 
