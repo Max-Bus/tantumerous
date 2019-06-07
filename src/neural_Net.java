@@ -357,12 +357,16 @@ class Neuron{
 
 
     public void changeweights(double [] w){
-        weights=w.clone();
+        for(int i=0;i<w.length;i++){
+            weights[i]+=w[i];
+        }
     }
 
 
     public void changebias(double [] b){
-        bias=b.clone();
+        for(int i=0;i<b.length;i++){
+            bias[i]+=b[i];
+        }
     }
 
 
