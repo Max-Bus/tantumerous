@@ -284,10 +284,10 @@ public class neural_Net {
         }
         //finds the hieghest of the out put nodes and returns what it believes teh number is
         int highest=-1;
-        Neuron highestnueron=neurons[layers][0];
-        for (int i = 0; i <neurons[layers].length ; i++) {
-            if(highestnueron.value<neurons[layers][i].value){
-                highestnueron=neurons[layers][i];
+        Neuron highestnueron=neurons[layers-1][0];
+        for (int i = 0; i <neurons[layers-1].length ; i++) {
+            if(highestnueron.value<neurons[layers-1][i].value){
+                highestnueron=neurons[layers-1][i];
                 highest=i;
             }
         }
