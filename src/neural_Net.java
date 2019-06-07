@@ -24,10 +24,17 @@ public class neural_Net {
             neurons[0][i]=new Neuron(0,0);
         }
         for (int i = 1; i <neurons.length ; i++) {
-            neurons[i]=new Neuron[(int)Math.sqrt(neurons[i-1].length)+outputnodes];
-            for (int j = 0; j <neurons[i].length ; j++) {
-                neurons[i][j]=new Neuron(0,neurons[i-1].length);
+
+            if(i == neurons.length-1){
+                neurons[i] = new Neuron[outputnodes];
             }
+            else {
+                neurons[i] = new Neuron[(int) Math.sqrt(neurons[i - 1].length) + outputnodes];
+            }
+            for (int j = 0; j < neurons[i].length; j++) {
+                neurons[i][j] = new Neuron(0, neurons[i - 1].length);
+            }
+
         }
     }
 
@@ -59,20 +66,27 @@ public class neural_Net {
         for(int layer = 0; layer < neurons.length; layer++){
 
             //this for loop prints layers to the output file
-            for(int neuron = 0; neuron < neurons[0].length; neuron++){
+            for(int neuron = 0; neuron < neurons[layer].length; neuron++){
 
-                //these for loops do the output for individual neurons
-                for(int weight = 0; weight < neurons[layer][neuron].weights.length-1; weight++){
-                    out.write(Double.toString(neurons[layer][neuron].weights[weight]));
-                    out.write(" ");
+
+                if(neurons[layer][neuron].weights.length > 0) {
+                    //these for loops do the output for individual neurons
+                    for (int weight = 0; weight < neurons[layer][neuron].weights.length - 1; weight++) {
+                        out.write(Double.toString(neurons[layer][neuron].weights[weight]));
+                        out.write(" ");
+                    }
+                    out.write(Double.toString(neurons[layer][neuron].weights[neurons[layer][neuron].weights.length - 1]));
                 }
-                out.write(Double.toString(neurons[layer][neuron].weights[neurons[layer][neuron].weights.length-1]));
+
                 out.write(':');
-                for(int bias = 0; bias < neurons[layer][neuron].bias.length-1; bias++){
-                    out.write(Double.toString(neurons[layer][neuron].bias[bias]));
-                    out.write(" ");
+
+                if(neurons[layer][neuron].weights.length > 0) {
+                    for (int bias = 0; bias < neurons[layer][neuron].bias.length - 1; bias++) {
+                        out.write(Double.toString(neurons[layer][neuron].bias[bias]));
+                        out.write(" ");
+                    }
+                    out.write(Double.toString(neurons[layer][neuron].bias[neurons[layer][neuron].bias.length - 1]));
                 }
-                out.write(Double.toString(neurons[layer][neuron].bias[neurons[layer][neuron].bias.length-1]));
 
                 out.write(",");
             }
@@ -153,7 +167,7 @@ public class neural_Net {
         
         neurons = new Neuron[weightsForNodes.size()][weightsForNodes.get(0).size()];
         for(int layer = 0; layer < neurons.length; layer++){
-            for(int neuron = 0; neuron < neurons[0].length; neuron++){
+            for(int neuron = 0; neuron < neurons[layer].length; neuron++){
                 //this instantiator will make you sad, but dw, I promise it makes sense
 
                 //this is an unwrapper
@@ -216,10 +230,10 @@ public class neural_Net {
         double[] out=new double[outputnodes];
         for (int i = 0; i <outputnodes ; i++) {
             if(i==expout){
-                out[i]=1-neurons[layers-1][i].value;
+                out[i]=1-neurons[layers-1][i].getValue();
             }
             else{
-                out[i]=neurons[layers-1][i].value-1;
+                out[i]=neurons[layers-1][i].getValue()-1;
             }
         }
         return out;
@@ -273,9 +287,26 @@ public class neural_Net {
 
     public int[] guessthatnumber(BufferedImage img){
         //reads in the img into the first layer
-        for(int i=0;i<neurons[0].length;i++){
-            neurons[0][i].value=img.getRGB(i/width,i%height);
+
+        int whereWeAt = 0;
+        for(int x = 0; x < width; x++){
+            for(int y=0; y < height; y++){
+
+                int rgb=img.getRGB(x,y);
+                int red = (rgb >> 16) & 0x000000FF;
+                int green = (rgb >>8 ) & 0x000000FF;
+                int blue = (rgb) & 0x000000FF;
+
+                rgb = (red + green + blue);
+                if (rgb == 765){
+                    rgb =0;
+                }
+                neurons[0][whereWeAt].setValue((red + green + blue));
+
+                whereWeAt++;
+            }
         }
+
         //loops through the many layers and nuerons updating each layers value
         for (int i = 1;i <neurons.length ; i++) {
             for (int j = 0; j <neurons[i].length ; j++) {
@@ -286,20 +317,20 @@ public class neural_Net {
         int highest=-1;
         Neuron highestnueron=neurons[layers-1][0];
         for (int i = 0; i <neurons[layers-1].length ; i++) {
-            if(highestnueron.value<neurons[layers-1][i].value){
+            if(highestnueron.getValue() < neurons[layers-1][i].getValue()){
                 highestnueron=neurons[layers-1][i];
                 highest=i;
             }
         }
         //returns the number it believes the image to be as well as its certainty
-        int[] out ={highest,(int)highestnueron.value*100};
+        int[] out ={highest,(int)highestnueron.getValue()*100};
         return out;
     }
 
 }
 
 class Neuron{
-    protected double value;
+    private double value;
     protected double[] weights;
     protected double[] bias;
     //maybe it should have a list of nodes from previous layer. maybe
@@ -308,29 +339,45 @@ class Neuron{
 
         weights=new double[previouslayer];
         bias=new double[previouslayer];
-        value=val;
+        value=sigmoid(val);
     }
 
     //last resort for evolution
     protected void randomMutation(){
+
         for(int i = 0; i < weights.length; i++){
-            weights[i] += (Math.random()- .5);
+            weights[i] += (Math.random()/4- .1125);
+
         }
-        for(int i = 0; i < bias.length; i++){
-            bias[i] += (Math.random()- .5);
-        }
+//
+//        for(int i = 0; i < bias.length; i++){
+//            bias[i] += (Math.random()- .5);
+//        }
     }
+
+
     public void changeweights(double [] w){
         weights=w.clone();
     }
+
+
     public void changebias(double [] b){
         bias=b.clone();
     }
+
+
     //Owen's homemade constructor, for making a neuron when you know about it
     public Neuron(double[] weights, double[] biases, int val){
         this.weights = weights;
         this.bias = biases;
-        value = val;
+        value = sigmoid(val);
+    }
+
+    public double getValue(){
+        return value;
+    }
+    public void setValue(double newVal){
+        value = sigmoid(newVal);
     }
 
 
@@ -357,7 +404,7 @@ class Neuron{
         }
         value=sigmoid(val);
     }
-    public double sigmoid(double x) {
+    public static double sigmoid(double x) {
         return (1/( 1 + Math.pow(Math.E,(-1*x))));
     }
 
