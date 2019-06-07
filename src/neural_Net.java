@@ -335,7 +335,7 @@ class Neuron{
     public double[] requestsweights(double change,Neuron[] previousnodes){ //makes a request for changes to weights given a target value
         double[] request=new double[previousnodes.length];
         for (int i = 0; i <weights.length ; i++) {
-            request[i]=change*previousnodes[i].value;
+            request[i]=weights[i]+change*previousnodes[i].value;
         }
         return request;
     }
@@ -344,7 +344,7 @@ class Neuron{
     public double[] requestsneurons(double change,Neuron[] previousnodes){//changes the weight of a neuron tahn returns requests for previous layer neurons
         double[] requests=new double[previousnodes.length];
         for (int i = 0; i <previousnodes.length ; i++) {
-            requests[i]=weights[i]*change;
+            requests[i]=previousnodes[i].value+weights[i]*change;
         }
         return requests;
     }
